@@ -1,6 +1,6 @@
 {
   "name": "retry-jitter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Retry async functions with exponential backoff, jitter, and AbortSignal support. Zero dependencies, fully typed, ESM + CJS.",
   "keywords": [
     "retry",
