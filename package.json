@@ -1,0 +1,66 @@
+{
+  "name": "retry-jitter",
+  "version": "0.1.0",
+  "description": "Retry async functions with exponential backoff, jitter, and AbortSignal support. Zero dependencies, fully typed, ESM + CJS.",
+  "keywords": [
+    "retry",
+    "backoff",
+    "exponential-backoff",
+    "jitter",
+    "abort",
+    "abortsignal",
+    "promise",
+    "async",
+    "fetch"
+  ],
+  "homepage": "https://github.com/acus9345/retry-jitter#readme",
+  "bugs": {
+    "url": "https://github.com/acus9345/retry-jitter/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acus9345/retry-jitter.git"
+  },
+  "license": "MIT",
+  "author": "acus9345 <acus9345@gmail.com>",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit && publint && attw --pack .",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@types/node": "^26.6.5",
+    "publint": "^0.3.25",
+    "tsup": "^9.0.0",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5"
+  }
+}
