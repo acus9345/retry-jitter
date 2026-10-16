@@ -1,6 +1,6 @@
 # Releasing
 
-New versions publish to npm from GitHub Actions ([`.github/workflows/release.yml`](.github/workflows/release.yml)) when a GitHub release is published. The workflow uses npm trusted publishing (OIDC), so there is no npm token to manage and no 2FA prompt, and every version gets a provenance attestation.
+New versions publish to npm from GitHub Actions ([`.github/workflows/publish.yml`](.github/workflows/publish.yml)) when a GitHub release is published. The workflow uses npm trusted publishing (OIDC), so there is no npm token to manage and no 2FA prompt, and every version gets a provenance attestation.
 
 ## One-time setup on npmjs.com
 
@@ -10,8 +10,8 @@ Do this once before the first CI release:
 2. Under **Trusted publishers**, choose **GitHub Actions** and enter:
    - Organization or user: `acus9345`
    - Repository: `retry-jitter`
-   - Workflow filename: `release.yml`
-   - Environment: leave empty
+   - Workflow filename: `publish.yml`
+   - Environment: `forclaude` (must match `environment:` in the workflow)
 3. Save.
 
 ## Cutting a release

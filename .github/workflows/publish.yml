@@ -22,6 +22,8 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Must match the environment in the npm trusted publisher config.
+    environment: forclaude
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
