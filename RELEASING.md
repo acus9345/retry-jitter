@@ -34,7 +34,7 @@ Do this once before the first CI release:
 
    ```bash
    git tag v0.2.0
-   git push --tags
+   git push origin v0.2.0
    ```
 
 5. Publish the GitHub release. This starts the publish workflow:
@@ -44,5 +44,7 @@ Do this once before the first CI release:
    ```
 
    You can paste the `CHANGELOG.md` section in as the notes instead, with `--notes` or in the GitHub web UI.
+
+For a prerelease such as `0.2.0-beta.1`, add `--prerelease` to `gh release create`. Versions with a `-` publish to the `next` dist-tag, so `npm install retry-jitter` keeps getting the last stable version.
 
 The workflow fails before publishing if the tag does not match the `package.json` version. Watch it with `gh run watch`, then check the provenance badge on https://www.npmjs.com/package/retry-jitter.

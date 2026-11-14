@@ -6,6 +6,9 @@ name: Release
 # This listens only to published releases, not to pushed v* tags:
 # `gh release create vX.Y.Z` pushes the tag and publishes the release together,
 # so triggering on both would run the publish twice.
+#
+# Actions are pinned to commit SHAs because this job can mint an npm publish
+# token. Dependabot keeps the pins current.
 
 on:
   release:
@@ -25,24 +28,41 @@ jobs:
     # Must match the environment in the npm trusted publisher config.
     environment: forclaude
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # No dependency cache: a poisoned cache could tamper with what gets published.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
-          cache: npm
+          package-manager-cache: false
           registry-url: https://registry.npmjs.org
-      # Trusted publishing needs npm 11.5.1 or newer.
-      - run: npm install -g npm@^11.5.1
-      - name: Check the tag matches package.json
+      - name: Check npm supports trusted publishing
         run: |
-          version="v$(node -p "require('./package.json').version")"
-          if [ "$version" != "$GITHUB_REF_NAME" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $version"
+          node -e '
+            const [major, minor, patch] = process.argv[1].split(".").map(Number);
+            if (major > 11 || (major === 11 && (minor > 5 || (minor === 5 && patch >= 1)))) process.exit(0);
+            console.log(`::error::npm ${process.argv[1]} is too old for trusted publishing (needs 11.5.1+)`);
+            process.exit(1);
+          ' "$(npm --version)"
+      - name: Check the tag matches package.json
+        id: version
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version v$version"
             exit 1
           fi
+          # Prereleases (1.2.0-beta.1) go to the "next" dist-tag so they never become "latest".
+          case "$version" in
+            *-*) echo "dist-tag=next" >> "$GITHUB_OUTPUT" ;;
+            *) echo "dist-tag=latest" >> "$GITHUB_OUTPUT" ;;
+          esac
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
       - run: npm run lint
-      - run: npm publish --provenance --access public
+      - run: npm publish --provenance --access public --tag "$DIST_TAG"
+        env:
+          DIST_TAG: ${{ steps.version.outputs.dist-tag }}
