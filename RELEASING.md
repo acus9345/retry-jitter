@@ -14,6 +14,8 @@ Do this once before the first CI release:
    - Environment: `forclaude` (must match `environment:` in the workflow)
 3. Save.
 
+On GitHub, the `forclaude` environment (repo **Settings** → **Environments**) only allows deployments from tags matching `v*`, so the publish job can't run from a branch or any other ref.
+
 ## Cutting a release
 
 1. Bump the version in `package.json` (this also updates `package-lock.json`):
